@@ -3,6 +3,7 @@
 ## Core Claude Concepts (.com domains - 75%)
 
 ### Intelligence & AI
+
 1. claudeiq.com
 2. claudemind.com
 3. claudecore.com
@@ -30,6 +31,7 @@
 25. claudeelite.com
 
 ### Code & Development
+
 26. claudecode.com
 27. claudedev.com
 28. claudebuild.com
@@ -57,6 +59,7 @@
 50. claudefork.com
 
 ### Productivity & Tools
+
 51. claudetool.com
 52. claudetools.com
 53. claudework.com
@@ -84,6 +87,7 @@
 75. claudelive.com
 
 ### Analysis & Intelligence
+
 76. claudedata.com
 77. claudestats.com
 78. claudemetrics.com
@@ -108,9 +112,10 @@
 97. claudemap.com
 98. claudeguide.com
 99. claudenav.com
-100. claudepath.com
+100.  claudepath.com
 
 ### Creative & Content
+
 101. claudecreate.com
 102. claudemake.com
 103. claudecraft.com
@@ -138,6 +143,7 @@
 125. claudetalk.com
 
 ### Problem Solving & Solutions
+
 126. claudesolve.com
 127. claudefix.com
 128. claudehelp.com
@@ -167,6 +173,7 @@
 ## Alternative Domains (.io, .co, .net, .dev, .ai - 25%)
 
 ### Tech-focused alternatives
+
 151. claude.io
 152. claude.dev
 153. claude.ai

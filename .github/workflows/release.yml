@@ -53,11 +53,11 @@ jobs:
           echo "🚀 Starting release process..."
           echo "📦 Found ${{ steps.detect.outputs.package-count }} affected packages"
           echo "📋 Packages: ${{ steps.detect.outputs.packages }}"
-          
+
           # Convert JSON array to comma-separated list
           PACKAGES=$(echo '${{ steps.detect.outputs.packages }}' | jq -r '.[]' | tr '\n' ',' | sed 's/,$//')
           echo "🎯 Packages to release: $PACKAGES"
-          
+
           # Build release command
           VERSION_INPUT="${{ github.event.inputs.version }}"
           if [ -z "$VERSION_INPUT" ]; then

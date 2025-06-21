@@ -10,7 +10,12 @@ export default [
   },
   js.configs.recommended,
   {
-    files: ['src/**/*.ts', 'src/**/*.tsx', 'packages/nx-surrealdb/src/**/*.ts', 'packages/nx-surrealdb/src/**/*.tsx'],
+    files: [
+      'src/**/*.ts',
+      'src/**/*.tsx',
+      'packages/nx-surrealdb/src/**/*.ts',
+      'packages/nx-surrealdb/src/**/*.tsx',
+    ],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -32,7 +37,12 @@ export default [
     },
   },
   {
-    files: ['src/**/*.spec.ts', 'src/**/*.test.ts', 'packages/nx-surrealdb/src/**/*.spec.ts', 'packages/nx-surrealdb/src/**/*.test.ts'],
+    files: [
+      'src/**/*.spec.ts',
+      'src/**/*.test.ts',
+      'packages/nx-surrealdb/src/**/*.spec.ts',
+      'packages/nx-surrealdb/src/**/*.test.ts',
+    ],
     languageOptions: {
       parser: tsparser,
       parserOptions: {

@@ -1,3 +1,109 @@
+//! Background daemon service for automatic Claude Code credential synchronization.
+//!
+//! This module provides a long-running daemon service that monitors Claude Code credentials
+//! for changes and automatically synchronizes them to configured GitHub targets. The daemon
+//! runs as a systemd user service and provides intelligent monitoring, scheduling, and
+//! notification features.
+//!
+//! ## Core Features
+//!
+//! - **Automatic Monitoring**: Watches for credential changes and expiration
+//! - **Smart Scheduling**: Syncs immediately after token refresh with configurable delays
+//! - **Session Warnings**: Desktop notifications before session expiry
+//! - **Error Recovery**: Robust error handling with failure notifications
+//! - **Signal Handling**: Graceful shutdown on SIGINT/SIGTERM
+//! - **Startup Recovery**: Reconciliation check on daemon startup
+//!
+//! ## Daemon Lifecycle
+//!
+//! 1. **Startup**: Perform initial sync check and reconciliation
+//! 2. **Monitoring Loop**: Check credentials every 5 minutes, session warnings every minute
+//! 3. **Token Expiry**: Wait for refresh, then sync to all targets
+//! 4. **Notifications**: Send warnings before expiry, errors on sync failures
+//! 5. **Shutdown**: Graceful cleanup on shutdown signals
+//!
+//! ## Usage Examples
+//!
+//! ### Basic Daemon Usage
+//!
+//! ```rust,no_run
+//! use claude_code_toolkit::daemon::Daemon;
+//!
+//! #[tokio::main]
+//! async fn main() -> claude_code_toolkit::Result<()> {
+//!     // Initialize daemon with configuration
+//!     let mut daemon = Daemon::new_with_config().await?;
+//!     
+//!     // Start the main daemon loop (runs indefinitely)
+//!     daemon.start().await?;
+//!     
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ### One-time Check
+//!
+//! ```rust,no_run
+//! use claude_code_toolkit::daemon::Daemon;
+//!
+//! #[tokio::main]
+//! async fn main() -> claude_code_toolkit::Result<()> {
+//!     let mut daemon = Daemon::new_with_config().await?;
+//!     
+//!     // Run a single sync check without starting the daemon
+//!     daemon.run_once().await?;
+//!     
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ## Configuration
+//!
+//! The daemon reads configuration from `~/.goodiebag/claude-code/config.yml`:
+//!
+//! ```yaml
+//! daemon:
+//!   log_level: info
+//!   sync_delay_after_expiry: 60  # seconds to wait after token expiry
+//!
+//! notifications:
+//!   session_warnings: [30, 15, 5]  # minutes before expiry
+//!   sync_failures: true
+//! ```
+//!
+//! ## Systemd Integration
+//!
+//! The daemon is designed to run as a systemd user service:
+//!
+//! ```ini
+//! [Unit]
+//! Description=Claude Code Credential Sync Daemon
+//!
+//! [Service]
+//! Type=simple
+//! ExecStart=/path/to/claude-code-toolkit daemon
+//! Restart=always
+//! RestartSec=10
+//!
+//! [Install]
+//! WantedBy=default.target
+//! ```
+//!
+//! ## Monitoring and Observability
+//!
+//! - **Structured Logging**: Uses `tracing` for detailed operation logs
+//! - **Desktop Notifications**: Visual feedback for important events
+//! - **Status Tracking**: Maintains sync state and error history
+//! - **Health Checks**: Validates configuration and connectivity on startup
+//!
+//! ## Error Handling
+//!
+//! The daemon implements comprehensive error handling:
+//! - Individual sync failures don't stop the daemon
+//! - Network issues are retried automatically
+//! - Configuration errors are logged and reported
+//! - Service continues running even after transient failures
+
 use crate::{
   config::{ credentials::CredentialsManager, manager::ConfigurationManager },
   error::*,
@@ -10,6 +116,27 @@ use tokio::signal;
 use tokio::time::{ interval, sleep };
 use tracing::{ error, info, warn };
 
+/// Main daemon service for background credential synchronization.
+///
+/// The `Daemon` orchestrates automatic credential monitoring and synchronization
+/// by running in the background as a systemd user service. It coordinates between
+/// credential monitoring, configuration management, and sync operations while
+/// providing robust error handling and observability.
+///
+/// ## Architecture
+///
+/// The daemon maintains:
+/// - [`SyncService`] - Handles the actual credential synchronization logic
+/// - [`ConfigurationManager`] - Manages YAML configuration and targets
+/// - [`CredentialsManager`] - Monitors Claude Code credential files
+/// - Shutdown coordination - Graceful termination handling
+///
+/// ## Monitoring Schedule
+///
+/// - **Credential checks**: Every 5 minutes (300 seconds)
+/// - **Session warnings**: Every 1 minute (60 seconds)  
+/// - **Post-expiry sync**: 30 seconds after detection
+/// - **Startup reconciliation**: Immediate on daemon start
 pub struct Daemon {
   sync_service: SyncService,
   config_manager: ConfigurationManager,

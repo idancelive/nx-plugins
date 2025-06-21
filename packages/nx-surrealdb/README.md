@@ -1,44 +1,63 @@
 # nx-surrealdb
 
-A comprehensive SurrealDB toolkit for [Nx](https://nx.dev/) monorepos featuring migration management, dependency resolution, and extensible tooling architecture.
+A comprehensive SurrealDB toolkit for [Nx](https://nx.dev/) monorepos featuring
+migration management, dependency resolution, and extensible tooling
+architecture.
 
 ## Features
 
 ### 🚀 **Migration Management**
+
 - **`migrate`**: Apply pending migrations with dependency resolution
-- **`rollback`**: Safe rollback with dependency conflict detection  
+- **`rollback`**: Safe rollback with dependency conflict detection
 - **`status`**: Rich status visualization with dependency graphs
 
 ### 🔧 **Extensible Architecture**
-- **Modular Design**: Foundation for expanding SurrealDB tooling beyond migrations
-- **Future Features**: Schema generators, seeder utilities, query builders, and more
-- **Plugin Architecture**: Extensible framework for SurrealDB development workflows
+
+- **Modular Design**: Foundation for expanding SurrealDB tooling beyond
+  migrations
+- **Future Features**: Schema generators, seeder utilities, query builders, and
+  more
+- **Plugin Architecture**: Extensible framework for SurrealDB development
+  workflows
 
 ### 🔄 **Dependency Management**
-- **Module Dependencies**: JSON/YAML configuration with explicit dependency declarations
+
+- **Module Dependencies**: JSON/YAML configuration with explicit dependency
+  declarations
 - **Topological Sorting**: Automatic execution order based on dependency graphs
 - **Circular Detection**: Prevents circular dependency configurations
-- **Safety Validation**: Blocks unsafe rollbacks that would break dependent modules
+- **Safety Validation**: Blocks unsafe rollbacks that would break dependent
+  modules
 
 ### 📊 **Rich Visualization**
-- **ASCII Dependency Trees**: Beautiful console visualization of module relationships
+
+- **ASCII Dependency Trees**: Beautiful console visualization of module
+  relationships
 - **Status Indicators**: Clear up-to-date vs pending migration states
 - **JSON Output**: Machine-readable output for automation and CI/CD integration
 - **Detailed Mode**: Show specific pending migration files and metadata
 
 ### 🛡️ **Safety & Reliability**
-- **Migration Tracking**: Complete history in `system_migrations` table with checksums and timing
+
+- **Migration Tracking**: Complete history in `system_migrations` table with
+  checksums and timing
 - **Rollback Safety**: Pre-validation prevents dependency conflicts
 - **Force Override**: Bypass safety checks when needed for emergency situations
 - **Dry-Run Mode**: Preview operations without executing changes
 - **Transaction Control**: Optional transaction wrapping for atomicity
 
 ### 🎯 **Developer Experience**
-- **Smart Module Targeting**: Reference modules by index (`1`), name (`auth`), number (`10`), or full path (`010_auth`)
-- **Granular File Targeting**: Reference specific migration files by index (`1`), name (`auth`), or full filename
-- **Multiple Reference Patterns**: Mix and match module and filename patterns in a single command (`--module 0,auth,20 --filename 1,2`)
+
+- **Smart Module Targeting**: Reference modules by index (`1`), name (`auth`),
+  number (`10`), or full path (`010_auth`)
+- **Granular File Targeting**: Reference specific migration files by index
+  (`1`), name (`auth`), or full filename
+- **Multiple Reference Patterns**: Mix and match module and filename patterns in
+  a single command (`--module 0,auth,20 --filename 1,2`)
 - **Environment Variables**: Full `.env` support with variable interpolation
-- **Rich Logging**: Emoji-enhanced console output with detailed execution statistics
+- **Rich Logging**: Emoji-enhanced console output with detailed execution
+  statistics
 - **Error Handling**: Comprehensive error messages with actionable guidance
 
 ## Prerequisites
@@ -51,6 +70,7 @@ A comprehensive SurrealDB toolkit for [Nx](https://nx.dev/) monorepos featuring 
 ## Installation
 
 1. **Add the Plugin to Your Nx Workspace**:
+
    ```bash
    npm install @deepbrainspace/nx-surrealdb --save-dev
    # or
@@ -58,10 +78,13 @@ A comprehensive SurrealDB toolkit for [Nx](https://nx.dev/) monorepos featuring 
    ```
 
 2. **Alternative: GitHub Releases**
-   
-   Download packages directly from [GitHub Releases](https://github.com/deepbrainspace/goodiebag/releases):
+
+   Download packages directly from
+   [GitHub Releases](https://github.com/deepbrainspace/goodiebag/releases):
+
    - **Production releases**: Tagged versions (e.g., `nx-surrealdb-v1.0.0`)
-   - **SHA-based releases**: Main branch builds with commit SHA (e.g., `nx-surrealdb-a59d989`)
+   - **SHA-based releases**: Main branch builds with commit SHA (e.g.,
+     `nx-surrealdb-a59d989`)
 
    ```bash
    # Download and install from GitHub release
@@ -156,13 +179,13 @@ Create `database/config.json`:
       "depends": []
     },
     "010_auth": {
-      "name": "Authentication & Users", 
+      "name": "Authentication & Users",
       "description": "User authentication and authorization system",
       "depends": ["000_admin"]
     },
     "020_schema": {
       "name": "Application Schema",
-      "description": "Core application data models and relationships", 
+      "description": "Core application data models and relationships",
       "depends": ["010_auth"]
     }
   },
@@ -200,7 +223,7 @@ database/
 # Generate migration in existing module
 nx g @deepbrainspace/nx-surrealdb:migration create-users --project database --module auth
 
-# Generate migration with new module creation  
+# Generate migration with new module creation
 nx g @deepbrainspace/nx-surrealdb:migration setup-notifications --project database --module notifications --createModule
 ```
 
@@ -317,6 +340,7 @@ nx run database:rollback --filename 1,2,auth    # Multiple files using mixed pat
 ## Common Workflows
 
 ### Quick Development Workflow
+
 ```bash
 # Check what needs to be done
 nx run database:status
@@ -329,6 +353,7 @@ nx run database:status --module 1 --detailed
 ```
 
 ### Safe Production Deployment
+
 ```bash
 # Preview all changes first
 nx run database:migrate --dryRun
@@ -343,6 +368,7 @@ nx run database:status
 ```
 
 ### Emergency Rollback Workflow
+
 ```bash
 # Check current state
 nx run database:status --detailed
@@ -362,6 +388,7 @@ nx run database:rollback --module auth      # Then target module
 ```
 
 ### Team Development Best Practices
+
 ```bash
 # Always check status before starting work
 nx run database:status
@@ -376,6 +403,7 @@ nx run database:migrate --module 1          # Quick migrate second module
 ```
 
 ### Working with Locked Modules
+
 ```bash
 # Check which modules are locked
 nx run database:status --detailed
@@ -412,7 +440,7 @@ The `config.json` file defines module dependencies:
       "depends": ["000_admin"]
     },
     "020_messaging": {
-      "name": "Messaging System", 
+      "name": "Messaging System",
       "depends": ["010_auth"]
     },
     "030_notifications": {
@@ -439,7 +467,7 @@ Protect critical modules from accidental rollbacks by adding lock configuration:
     },
     "010_auth": {
       "name": "Authentication & Users",
-      "description": "User authentication and authorization system", 
+      "description": "User authentication and authorization system",
       "depends": ["000_admin"],
       "locked": true,
       "lockReason": "Core authentication system - rollback would break user access"
@@ -454,21 +482,30 @@ Protect critical modules from accidental rollbacks by adding lock configuration:
 ```
 
 #### Lock Configuration Properties
-- **`locked`** (boolean, optional): When `true`, prevents rollback of this module
-- **`lockReason`** (string, optional): Human-readable explanation for why the module is locked
+
+- **`locked`** (boolean, optional): When `true`, prevents rollback of this
+  module
+- **`lockReason`** (string, optional): Human-readable explanation for why the
+  module is locked
 
 #### Lock Protection Features
-- 🔒 **Visual Indicators**: Locked modules display with lock icons in status output
-- 🛡️ **Rollback Prevention**: Automatically blocks rollback attempts on locked modules
+
+- 🔒 **Visual Indicators**: Locked modules display with lock icons in status
+  output
+- 🛡️ **Rollback Prevention**: Automatically blocks rollback attempts on locked
+  modules
 - 📝 **Clear Messaging**: Shows specific lock reasons when rollback is blocked
-- ⚡ **Force Override**: Use `--force` flag to bypass lock protection for emergencies
-- 🎯 **Selective Locking**: Lock only critical modules, leave development modules unlocked
+- ⚡ **Force Override**: Use `--force` flag to bypass lock protection for
+  emergencies
+- 🎯 **Selective Locking**: Lock only critical modules, leave development
+  modules unlocked
 
 ### Executor Options
 
 #### Common Options (all executors)
+
 - `url`: SurrealDB connection URL
-- `user`: SurrealDB username  
+- `user`: SurrealDB username
 - `pass`: SurrealDB password
 - `namespace`: SurrealDB namespace
 - `database`: SurrealDB database
@@ -479,22 +516,26 @@ Protect critical modules from accidental rollbacks by adding lock configuration:
 - `configPath`: Path to config file (default: auto-detected)
 
 #### Migrate-specific Options
+
 - `dryRun`: Preview migrations without applying
 - `force`: Apply migrations even if already applied
 - `useTransactions`: Wrap migrations in transactions (default: true)
 
-#### Rollback-specific Options  
+#### Rollback-specific Options
+
 - `dryRun`: Preview rollbacks without applying
 - `force`: Bypass safety validation checks
 - `steps`: Number of migration steps to rollback (default: 1)
 
 #### Status-specific Options
+
 - `detailed`: Show detailed migration file information
 - `json`: Output as JSON instead of human-readable format
 
 ## Migration File Format
 
 ### Up Migration (`*_up.surql`)
+
 ```sql
 -- Create users table
 DEFINE TABLE IF NOT EXISTS users SCHEMAFULL;
@@ -504,6 +545,7 @@ DEFINE INDEX IF NOT EXISTS email_idx ON users FIELDS email UNIQUE;
 ```
 
 ### Down Migration (`*_down.surql`)
+
 ```sql
 -- Remove users table
 REMOVE INDEX IF EXISTS email_idx ON users;
@@ -513,11 +555,12 @@ REMOVE TABLE IF EXISTS users;
 ## Module Structure
 
 ### Gapped Numbering
+
 Use gapped numbering (000, 010, 020, 030) to allow insertion of new modules:
 
 ```
 000_admin     # System administration
-010_auth      # Authentication  
+010_auth      # Authentication
 020_schema    # Core schema
 030_messaging # Messaging system
 040_reporting # Reporting (can be inserted later)
@@ -525,73 +568,99 @@ Use gapped numbering (000, 010, 020, 030) to allow insertion of new modules:
 
 ### Module Reference Patterns
 
-The plugin supports multiple intuitive ways to specify modules, making it easy for developers to target the modules they need:
+The plugin supports multiple intuitive ways to specify modules, making it easy
+for developers to target the modules they need:
 
 #### **Index-Based (Most User-Friendly)**
+
 Reference modules by their position in sorted order:
+
 - `--module 0` → `000_admin` (first module)
-- `--module 1` → `010_auth` (second module)  
+- `--module 1` → `010_auth` (second module)
 - `--module 2` → `020_schema` (third module)
 
 #### **Number-Based (Direct Mapping)**
+
 Reference modules by their numeric prefix:
+
 - `--module 10` → `010_auth`
 - `--module 20` → `020_schema`
 - `--module 0` → `000_admin`
 
 #### **Name-Based (Semantic)**
+
 Reference modules by their descriptive name:
+
 - `--module auth` → `010_auth`
 - `--module admin` → `000_admin`
 - `--module schema` → `020_schema`
 
 #### **Full Name (Explicit)**
+
 Reference modules by their complete directory name:
+
 - `--module 010_auth` → `010_auth`
 - `--module 000_admin` → `000_admin`
 - `--module 020_schema` → `020_schema`
 
 #### **Multiple Modules**
+
 Combine any reference patterns with comma separation:
+
 - `--module 0,1` → `000_admin,010_auth`
 - `--module admin,auth,schema` → `000_admin,010_auth,020_schema`
 - `--module 0,auth,20` → `000_admin,010_auth,020_schema`
 
-**💡 Pro Tip**: Index-based referencing (`--module 1`) is often the quickest for interactive use, while name-based (`--module auth`) is most readable for scripts and documentation.
+**💡 Pro Tip**: Index-based referencing (`--module 1`) is often the quickest for
+interactive use, while name-based (`--module auth`) is most readable for scripts
+and documentation.
 
 ### Filename Reference Patterns
 
-The plugin also supports granular filename targeting within modules, allowing you to run specific migration files instead of entire modules:
+The plugin also supports granular filename targeting within modules, allowing
+you to run specific migration files instead of entire modules:
 
 #### **Numeric Patterns**
+
 Reference migration files by their numeric sequence:
+
 - `--filename 1` → `0001_setup_up.surql` (first migration file)
 - `--filename 2` → `0002_users_up.surql` (second migration file)
 
 #### **Name Patterns**
+
 Reference migration files by their descriptive name:
+
 - `--filename auth` → `0001_authentication_up.surql`
 - `--filename users` → `0002_users_up.surql`
 
 #### **Full Filename**
+
 Reference migration files by their complete name:
+
 - `--filename 0001_authentication_up.surql` → exact match
 
 #### **Combined Module + Filename Targeting**
+
 For precise control, combine module and filename patterns:
+
 - `--module auth --filename 1` → First migration in auth module only
 - `--module 0,1 --filename 2` → Second migration in first two modules
 
 #### **Multiple Filenames**
+
 Target multiple files with comma separation:
+
 - `--filename 1,2,auth` → Multiple files using mixed patterns
 - `--filename 0001,0002` → Multiple files by number
 
-**💡 Pro Tip**: Filename patterns work with all executors (migrate, rollback, status) and automatically handle `_up.surql` vs `_down.surql` file resolution.
+**💡 Pro Tip**: Filename patterns work with all executors (migrate, rollback,
+status) and automatically handle `_up.surql` vs `_down.surql` file resolution.
 
 ## Console Output Examples
 
 ### Status Command
+
 ```
 📊 Checking migration status...
 
@@ -623,7 +692,8 @@ Target multiple files with comma separation:
       └─ 020_schema
 ```
 
-### Migrate Command  
+### Migrate Command
+
 ```
 🚀 Starting migration execution...
 ✅ Migration completed successfully!
@@ -638,6 +708,7 @@ Target multiple files with comma separation:
 ```
 
 ### Rollback Safety Validation
+
 ```
 🔍 Validating rollback safety...
 ❌ Rollback validation failed!
@@ -651,6 +722,7 @@ Target multiple files with comma separation:
 ```
 
 ### Module Lock Protection
+
 ```
 🔒 Rollback locked - cannot rollback protected modules!
    Locked modules:
@@ -664,33 +736,39 @@ Target multiple files with comma separation:
 ## Best Practices
 
 ### 1. **Module Organization**
+
 - Use descriptive module names that reflect functional areas
 - Keep modules focused on single concerns
 - Use gapped numbering to allow future insertions
 
 ### 2. **Migration Writing**
+
 - Always write corresponding down migrations
 - Use `IF NOT EXISTS` and `IF EXISTS` for idempotent operations
 - Test migrations in development before applying to production
 
 ### 3. **Dependency Management**
+
 - Clearly define module dependencies in config.json
 - Avoid circular dependencies
 - Keep dependency chains shallow when possible
 
 ### 4. **Module Lock Protection**
+
 - Lock critical modules to prevent accidental rollbacks
 - Use descriptive lock reasons to explain why modules are protected
 - Reserve locks for essential infrastructure modules (admin, core schema)
 - Document locked modules in team procedures
 
 ### 5. **Safety Practices**
+
 - Use dry-run mode to preview changes
 - Validate rollback safety before applying
 - Use force flag sparingly and with caution
 - Test migration paths in development environments
 
 ### 6. **Environment Management**
+
 - Use environment variables for all connection details
 - Never commit credentials to version control
 - Use different databases for different environments
@@ -700,6 +778,7 @@ Target multiple files with comma separation:
 ### Common Issues
 
 #### 1. **Connection Errors**
+
 ```bash
 # Verify SurrealDB is running
 surreal start --log trace --user root --pass root memory
@@ -709,6 +788,7 @@ echo $SURREALDB_URL
 ```
 
 #### 2. **Module Not Found**
+
 ```bash
 # List available modules
 nx run database:status
@@ -718,6 +798,7 @@ ls database/
 ```
 
 #### 3. **Dependency Conflicts**
+
 ```bash
 # Check dependency graph
 nx run database:status --detailed
@@ -727,6 +808,7 @@ nx run database:rollback --module mymodule --dryRun
 ```
 
 #### 4. **Migration State Issues**
+
 ```bash
 # Check current state
 nx run database:status --module mymodule --detailed
@@ -736,6 +818,7 @@ nx run database:migrate --module mymodule --force
 ```
 
 #### 5. **Module Lock Issues**
+
 ```bash
 # Check which modules are locked
 nx run database:status --detailed
@@ -751,6 +834,7 @@ nx run database:rollback --module mymodule --force
 ```
 
 #### 6. **Lock Configuration Errors**
+
 ```bash
 # Validate config syntax
 nx run database:status
@@ -765,7 +849,8 @@ nx run database:status
 
 ### 🏗️ **Repository Pattern Architecture**
 
-This plugin follows the **Repository Pattern** with clean separation of concerns and domain-driven design:
+This plugin follows the **Repository Pattern** with clean separation of concerns
+and domain-driven design:
 
 ```
 src/lib/
@@ -790,7 +875,9 @@ src/lib/
 ### 🔄 **Repository Pattern Implementation**
 
 #### **MigrationRepository** (Data Access Layer)
+
 **Responsibility**: Database operations for migration state management
+
 ```typescript
 // Simple CRUD operations
 async addMigration(record: MigrationRecord): Promise<void>
@@ -799,7 +886,9 @@ async getLatestMigrationStatus(number: string, name: string): Promise<Migration 
 ```
 
 #### **MigrationService** (Business Logic Layer)
+
 **Responsibility**: Orchestrate migration workflows and business rules
+
 ```typescript
 // Complex workflow and rules
 async executeMigrations(modules?: string[]): Promise<MigrationResult>
@@ -808,7 +897,9 @@ async findPendingMigrations(modules?: string[]): Promise<MigrationFile[]>
 ```
 
 #### **ModuleLockManager** (Security Layer)
+
 **Responsibility**: Module lock protection and validation
+
 ```typescript
 // Lock validation and management
 validateRollbackLock(moduleIds: string[]): { canRollback: boolean; blockedModules: string[] }
@@ -817,6 +908,7 @@ isModuleLocked(moduleId: string): boolean
 ```
 
 #### **Communication Pattern**
+
 ```
 MigrationService (Business Logic)
     ↓ delegates data operations
@@ -832,17 +924,19 @@ MigrationService (Business Logic)
 ### 🎯 **Design Benefits**
 
 ✅ **Single Responsibility**: Each class has one clear purpose  
-✅ **Testability**: Data access can be mocked, business logic tested separately  
+✅ **Testability**: Data access can be mocked, business logic tested
+separately  
 ✅ **Maintainability**: Changes to business rules don't affect data access  
-✅ **Scalability**: Can swap database implementations without changing business logic  
-✅ **Repository Pattern**: Industry-standard data access abstraction  
+✅ **Scalability**: Can swap database implementations without changing business
+logic  
+✅ **Repository Pattern**: Industry-standard data access abstraction
 
 ### 🧪 **Test-Driven Development**
 
 - **Comprehensive Test Coverage**: All components follow TDD methodology
 - **Layer Testing**: Repository and Service layers tested independently
 - **Integration Tests**: End-to-end workflow validation
-- **Mock-friendly**: Clean interfaces enable easy mocking for unit tests  
+- **Mock-friendly**: Clean interfaces enable easy mocking for unit tests
 
 ## Contributing
 
@@ -908,6 +1002,7 @@ nx g @deepbrainspace/nx-surrealdb:migration setup --project=database
 ### Architecture
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed system design, including:
+
 - Repository Pattern implementation
 - Domain-Driven Design principles
 - Component interaction diagrams

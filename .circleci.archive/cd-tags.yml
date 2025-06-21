@@ -76,35 +76,35 @@ jobs:
             # Extract package name and version from tag
             PACKAGE_NAME=$(echo "$CIRCLE_TAG" | sed 's/-v[0-9].*//')
             PACKAGE_VERSION=$(echo "$CIRCLE_TAG" | sed 's/.*-v//')
-            
+
             echo "Publishing $PACKAGE_NAME with semantic version: $PACKAGE_VERSION"
-            
+
             # Verify package exists
             if ! npx nx show project "$PACKAGE_NAME" --json >/dev/null 2>&1; then
               echo "Error: Package $PACKAGE_NAME not found"
               exit 1
             fi
-            
+
             # Fresh build for production releases (no cache)
             npx nx build "$PACKAGE_NAME" --skip-nx-cache
-            
+
             # Navigate to package directory
             PACKAGE_PATH=$(npx nx show project "$PACKAGE_NAME" --json | jq -r '.root')
             cd "$PACKAGE_PATH"
-            
+
             # Set semantic version
             pnpm version "$PACKAGE_VERSION" --no-git-tag-version
-            
+
             # Publish with semantic version as npm tag (production release)
             pnpm publish --tag "$PACKAGE_VERSION" --no-git-checks
-            
+
             # Also publish as 'latest' for convenience
             pnpm publish --tag latest --no-git-checks
-            
+
             # Create GitHub release
             pnpm pack
             TARBALL=$(ls *.tgz)
-            
+
             gh release create "$CIRCLE_TAG" "$TARBALL" \
               --title "Release ${PACKAGE_NAME} v${PACKAGE_VERSION}" \
               --notes "Production release of @deepbrainspace/${PACKAGE_NAME} v${PACKAGE_VERSION}" \

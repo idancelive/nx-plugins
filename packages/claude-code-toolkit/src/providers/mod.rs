@@ -1,4 +1,84 @@
-//! Provider implementations following Repository Pattern and Dependency Injection
+//! External service provider integrations for credential synchronization.
+//!
+//! This module contains provider implementations for various external services
+//! like GitHub, following the Repository Pattern and Dependency Injection principles.
+//! Providers handle secure credential synchronization, API interactions, and
+//! service-specific configuration management.
+//!
+//! ## Supported Providers
+//!
+//! - [`github`] - GitHub API integration for repository and organization sync
+//! - [`registry`] - Provider registry management and factory patterns
+//!
+//! ## Provider Architecture
+//!
+//! The provider system uses several design patterns:
+//!
+//! - **Factory Pattern**: [`ProviderFactory`] creates providers dynamically
+//! - **Repository Pattern**: Providers implement [`SecretProvider`] trait
+//! - **Dependency Injection**: Providers receive configuration via constructor
+//!
+//! ## Usage Examples
+//!
+//! ### Using the Provider Factory
+//!
+//! ```rust,no_run
+//! use claude_code_toolkit::providers::ProviderFactory;
+//! use std::collections::HashMap;
+//!
+//! #[tokio::main]
+//! async fn main() -> claude_code_toolkit::Result<()> {
+//!     let factory = ProviderFactory::new();
+//!     
+//!     // List available providers
+//!     let providers = factory.available_providers();
+//!     println!("Available providers: {:?}", providers);
+//!     
+//!     // Create a GitHub provider
+//!     let mut config = HashMap::new();
+//!     config.insert("token".to_string(), "your-github-token".to_string());
+//!     config.insert("org".to_string(), "your-org".to_string());
+//!     
+//!     let provider = factory.create("github", &config)?;
+//!     // Use provider for operations...
+//!     
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ### Direct Provider Usage
+//!
+//! ```rust,no_run
+//! use claude_code_toolkit::providers::github::GitHubProvider;
+//! use std::collections::HashMap;
+//!
+//! #[tokio::main]
+//! async fn main() -> claude_code_toolkit::Result<()> {
+//!     let mut config = HashMap::new();
+//!     config.insert("token".to_string(), "your-token".to_string());
+//!     
+//!     let provider = GitHubProvider::new(config)?;
+//!     
+//!     // Use provider for operations...
+//!     
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ## Configuration Requirements
+//!
+//! Each provider has specific configuration requirements:
+//!
+//! ### GitHub Provider
+//! - **Required**: `token` (GitHub personal access token)
+//! - **Optional**: `org` (default organization), `base_url` (GitHub Enterprise URL)
+//!
+//! ## Security Considerations
+//!
+//! - All API tokens are stored securely and never logged
+//! - Network communications use HTTPS with certificate validation
+//! - Sensitive configuration is validated before use
+//! - Rate limiting and retry logic prevent API abuse
 
 pub mod github;
 pub mod registry;

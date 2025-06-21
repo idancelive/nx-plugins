@@ -6,8 +6,8 @@ edition = '2024'
 description = 'Claude Code management tool for credential sync, session monitoring, and GitHub integration'
 license = 'MIT'
 repository = 'https://github.com/deepbrainspace/goodiebag'
-homepage = 'https://github.com/deepbrainspace/goodiebag/tree/main/packages/claude-code'
-documentation = 'https://docs.rs/claude-code'
+homepage = 'https://github.com/deepbrainspace/goodiebag/tree/main/packages/claude-code-toolkit'
+documentation = 'https://docs.rs/claude-code-toolkit'
 readme = 'README.md'
 keywords = ['claude', 'ai', 'github', 'sync', 'daemon']
 categories = ['command-line-utilities', 'development-tools']
@@ -21,6 +21,11 @@ exclude = [
 	'Cargo.lock',
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+targets = ["x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc", "x86_64-apple-darwin"]
+
 [lib]
 name = 'claude_code_toolkit'
 path = 'src/lib.rs'
@@ -31,16 +36,16 @@ path = 'src/main.rs'
 
 [dependencies]
 clap = { version = '4.5', features = ['derive', 'env'] }
-tokio = { version = '1.41', features = ['full'] }
+tokio = { version = '1.41', features = ['rt-multi-thread', 'macros', 'time', 'signal', 'sync', 'fs', 'process'] }
 async-trait = '0.1'
 serde = { version = '1.0', features = ['derive'] }
 serde_json = '1.0'
 serde_yaml = '0.9'
 shellexpand = '3.1'
 notify = '6.1'
-reqwest = { version = '0.12', features = ['json'] }
+reqwest = { version = '0.12', features = ['json', 'rustls-tls'], default-features = false }
 tracing = '0.1'
-tracing-subscriber = { version = '0.3', features = ['env-filter', 'json'] }
+tracing-subscriber = { version = '0.3', features = ['env-filter', 'fmt'], default-features = false }
 tracing-appender = '0.2'
 anyhow = '1.0'
 thiserror = '1.0'
@@ -58,6 +63,13 @@ cron = '0.12'
 default = ['notifications', 'systemd']
 notifications = ['notify-rust']
 systemd = ['libsystemd']
+
+[profile.release]
+opt-level = "z"     # Optimize for size
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations
+panic = "abort"     # Abort on panic instead of unwinding
+strip = true        # Strip symbols from binary
 
 [dev-dependencies]
 tempfile = '3.8'

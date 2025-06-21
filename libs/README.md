@@ -1,6 +1,7 @@
 # Libs
 
-This directory contains shared libraries used across apps and packages in the goodie-bag monorepo.
+This directory contains shared libraries used across apps and packages in the
+goodie-bag monorepo.
 
 ## Structure
 
@@ -13,7 +14,7 @@ This directory contains shared libraries used across apps and packages in the go
 ## Types of Libraries
 
 - **Feature Libraries**: Business logic specific to a domain
-- **UI Libraries**: Reusable user interface components  
+- **UI Libraries**: Reusable user interface components
 - **Utility Libraries**: Common utilities and helpers
 - **Data Access Libraries**: API clients, database utilities
 
@@ -33,4 +34,5 @@ nx test my-lib
 nx lint my-lib
 ```
 
-Libraries are **not published** to npm - they're internal dependencies used by apps and packages.
+Libraries are **not published** to npm - they're internal dependencies used by
+apps and packages.

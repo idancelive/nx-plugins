@@ -43,7 +43,7 @@ To fix this you will either need to add a Cargo.toml file at that location, or c
 
     const cargoTomlContents = tree.read(cargoTomlPath)!.toString('utf-8');
     const data = parseCargoToml(cargoTomlContents);
-    
+
     if (!data.package?.version) {
       throw new Error(
         `Unable to determine the current version for project "${this.projectGraphNode.name}" from ${workspaceRelativeCargoTomlPath}, please ensure that the "version" field is set within the [package] section of the Cargo.toml file`
@@ -76,15 +76,16 @@ To fix this you will either need to add a Cargo.toml file at that location, or c
     }
 
     const metadata = currentVersionResolverMetadata;
-    const registryUrl = typeof metadata?.registry === 'string' ? metadata.registry : 'https://crates.io';
-    
+    const registryUrl =
+      typeof metadata?.registry === 'string' ? metadata.registry : 'https://crates.io';
+
     try {
       // Use cargo search to check if package exists on registry
       const result = execSync(`cargo search "${packageName}" --limit 1 --registry crates-io`, {
         encoding: 'utf-8',
         stdio: 'pipe',
       });
-      
+
       // Parse cargo search output: "package_name = "version"    # description"
       const match = result.match(/^.*?\s*=\s*"([^"]+)"/);
       if (match && match[1]) {
@@ -93,7 +94,7 @@ To fix this you will either need to add a Cargo.toml file at that location, or c
           logText: `registry=${registryUrl}`,
         };
       }
-      
+
       return {
         currentVersion: null,
         logText: `registry=${registryUrl} (package not found)`,
@@ -141,15 +142,15 @@ To fix this you will either need to add a Cargo.toml file at that location, or c
     // Check both dependencies and dev-dependencies
     const dependencies = data.dependencies || {};
     const devDependencies = data['dev-dependencies'] || {};
-    
+
     let depData = dependencies[dependencyPackageName];
     let dependencyCollection: string | null = 'dependencies';
-    
+
     if (!depData) {
       depData = devDependencies[dependencyPackageName];
       dependencyCollection = depData ? 'dev-dependencies' : null;
     }
-    
+
     if (!depData) {
       return {
         currentVersion: null,
@@ -171,14 +172,11 @@ To fix this you will either need to add a Cargo.toml file at that location, or c
     };
   }
 
-  async updateProjectVersion(
-    tree: Tree,
-    newVersion: string
-  ): Promise<string[]> {
+  async updateProjectVersion(tree: Tree, newVersion: string): Promise<string[]> {
     const packageRoot = this.projectGraphNode.data.root;
     const cargoTomlPath = joinPathFragments(packageRoot, 'Cargo.toml');
     const workspaceRelativeCargoTomlPath = relative(workspaceRoot, cargoTomlPath);
-    
+
     const cargoTomlContents = tree.read(cargoTomlPath)!.toString('utf-8');
     const data = parseCargoToml(cargoTomlContents);
 
@@ -191,9 +189,7 @@ To fix this you will either need to add a Cargo.toml file at that location, or c
     data.package.version = newVersion;
     tree.write(cargoTomlPath, stringifyCargoToml(data));
 
-    return [
-      `✍️  New version ${newVersion} written to ${workspaceRelativeCargoTomlPath}`,
-    ];
+    return [`✍️  New version ${newVersion} written to ${workspaceRelativeCargoTomlPath}`];
   }
 
   async updateProjectDependencies(
@@ -231,7 +227,8 @@ To fix this you will either need to add a Cargo.toml file at that location, or c
           data.dependencies[dependencyPackageName] = newVersion;
           numUpdated++;
         } else if (typeof data.dependencies[dependencyPackageName] === 'object') {
-          (data.dependencies[dependencyPackageName] as Record<string, unknown>).version = newVersion;
+          (data.dependencies[dependencyPackageName] as Record<string, unknown>).version =
+            newVersion;
           numUpdated++;
         }
       }
@@ -242,7 +239,8 @@ To fix this you will either need to add a Cargo.toml file at that location, or c
           data['dev-dependencies'][dependencyPackageName] = newVersion;
           numUpdated++;
         } else if (typeof data['dev-dependencies'][dependencyPackageName] === 'object') {
-          (data['dev-dependencies'][dependencyPackageName] as Record<string, unknown>).version = newVersion;
+          (data['dev-dependencies'][dependencyPackageName] as Record<string, unknown>).version =
+            newVersion;
           numUpdated++;
         }
       }
@@ -276,7 +274,7 @@ export async function afterAllProjectsVersioned(
   deletedFiles: string[];
 }> {
   const changedFiles: string[] = [];
-  
+
   // Update Cargo.lock file if it exists
   const cargoLockPath = joinPathFragments(cwd, 'Cargo.lock');
   if (existsSync(cargoLockPath)) {

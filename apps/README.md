@@ -12,6 +12,7 @@ This directory contains deployable applications in the goodie-bag monorepo.
 ## Deployment
 
 Each app has its own deployment strategy:
+
 - **Static Sites**: Vercel, Netlify, S3 + CloudFront
 - **Web Apps**: Vercel, Railway, AWS
 - **APIs**: Serverless functions, containers
@@ -22,7 +23,7 @@ Each app has its own deployment strategy:
 # Serve app locally
 nx serve app-name
 
-# Build for production  
+# Build for production
 nx build app-name
 
 # Deploy app
@@ -32,4 +33,5 @@ nx deploy app-name
 nx test app-name
 ```
 
-Apps can depend on packages and libs within the monorepo for shared functionality.
+Apps can depend on packages and libs within the monorepo for shared
+functionality.

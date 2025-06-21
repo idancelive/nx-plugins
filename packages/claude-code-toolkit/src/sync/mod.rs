@@ -1,4 +1,115 @@
-//! Credential synchronization service following Service Pattern
+//! Credential synchronization service for automated Claude Code token management.
+//!
+//! This module provides intelligent credential synchronization between Claude Code
+//! and external services like GitHub. It implements smart change detection, multi-target
+//! sync capabilities, and state tracking to ensure efficient and reliable credential
+//! distribution.
+//!
+//! ## Core Functionality
+//!
+//! - **Intelligent Sync**: Only syncs when credentials change or targets are missing secrets
+//! - **Multi-Target Support**: Sync to multiple GitHub organizations and repositories
+//! - **State Tracking**: Maintains sync history and prevents unnecessary operations
+//! - **Error Handling**: Robust error reporting and partial failure recovery
+//! - **Configuration-Driven**: Uses YAML configuration for flexible target management
+//!
+//! ## Architecture
+//!
+//! The sync service follows the Service Pattern and coordinates between:
+//! - [`CredentialsManager`] - Reads Claude Code credentials from file system
+//! - [`ConfigurationManager`] - Manages sync targets and settings
+//! - [`ProviderRegistry`] - Handles external service integrations (GitHub)
+//! - State tracking system - Prevents duplicate syncs and tracks status
+//!
+//! ## Usage Examples
+//!
+//! ### Basic Synchronization
+//!
+//! ```rust,no_run
+//! use claude_code_toolkit::sync::SyncService;
+//!
+//! #[tokio::main]
+//! async fn main() -> claude_code_toolkit::Result<()> {
+//!     let mut sync_service = SyncService::new_with_config().await?;
+//!     
+//!     // Perform smart sync (only if needed)
+//!     sync_service.check_and_sync_if_needed().await?;
+//!     
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ### Force Synchronization
+//!
+//! ```rust,no_run
+//! use claude_code_toolkit::sync::SyncService;
+//!
+//! #[tokio::main]
+//! async fn main() -> claude_code_toolkit::Result<()> {
+//!     let mut sync_service = SyncService::new_with_config().await?;
+//!     
+//!     // Force sync regardless of change detection
+//!     let result = sync_service.force_sync().await?;
+//!     println!("Synced to {} targets, {} failed", result.succeeded, result.failed);
+//!     
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ### Check Sync Status
+//!
+//! ```rust,no_run
+//! use claude_code_toolkit::sync::SyncService;
+//!
+//! #[tokio::main]
+//! async fn main() -> claude_code_toolkit::Result<()> {
+//!     let sync_service = SyncService::new_with_config().await?;
+//!     
+//!     // Check if sync is needed
+//!     if sync_service.is_sync_needed().await? {
+//!         println!("Sync required - credentials changed or secrets missing");
+//!     }
+//!     
+//!     // Get target status
+//!     let status = sync_service.get_sync_status().await?;
+//!     for (target, available) in status {
+//!         println!("Target {}: {}", target, if available { "✓" } else { "✗" });
+//!     }
+//!     
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ## Smart Sync Logic
+//!
+//! The sync service implements intelligent change detection:
+//!
+//! 1. **Token Change Detection**: Compares current access token with last known state
+//! 2. **Secret Validation**: Checks if required secrets exist in target repositories/organizations
+//! 3. **State Persistence**: Saves sync state to `~/.goodiebag/sync-state.json`
+//! 4. **Incremental Updates**: Only syncs when changes are detected
+//!
+//! ## Configuration Integration
+//!
+//! The service reads sync targets from YAML configuration:
+//!
+//! ```yaml
+//! github:
+//!   organizations:
+//!     - name: my-org
+//!       secret_name: CLAUDE_CODE_TOKEN
+//!   repositories:
+//!     - repo: owner/repository
+//!       secret_name: CUSTOM_TOKEN_NAME
+//! ```
+//!
+//! ## Error Handling
+//!
+//! The sync service provides comprehensive error handling:
+//! - Individual target failures don't stop the entire sync process
+//! - Detailed error reporting for debugging
+//! - Graceful degradation when external services are unavailable
+//! - State consistency maintained even during partial failures
 
 use crate::config::{ credentials::CredentialsManager, manager::ConfigurationManager };
 use crate::error::Result;

@@ -21,7 +21,7 @@ workflows:
                 - develop
       - publish-sha-version:
           name: publish-main-sha
-          npm-tag-suffix: ""
+          npm-tag-suffix: ''
           requires:
             - dependencies
           filters:
@@ -30,7 +30,7 @@ workflows:
                 - main
       - publish-sha-version:
           name: publish-dev-sha
-          npm-tag-suffix: "-dev"
+          npm-tag-suffix: '-dev'
           requires:
             - dependencies
           filters:
@@ -73,7 +73,7 @@ jobs:
     parameters:
       npm-tag-suffix:
         type: string
-        default: ""
+        default: ''
     docker:
       - image: cimg/node:20.11
     steps:
@@ -99,23 +99,23 @@ jobs:
           command: |
             # Get affected packages
             AFFECTED_PACKAGES=$(npx nx show projects --affected --with-target=build --json | jq -r '.[]')
-            
+
             if [ -z "$AFFECTED_PACKAGES" ]; then
               echo "No packages affected - nothing to publish"
               exit 0
             fi
-            
+
             echo "Affected packages: $AFFECTED_PACKAGES"
-            
+
             # Build affected packages (will use NX Cloud cache if available)
             npx nx affected --target=build --parallel=3 --ci
-            
+
             # Get SHA for versioning
             SHORT_SHA=$(git rev-parse --short HEAD)
             SUFFIX="<< parameters.npm-tag-suffix >>"
-            
+
             echo "Using SHA version: $SHORT_SHA with suffix: $SUFFIX"
-            
+
             # Publish each affected package
             for package in $AFFECTED_PACKAGES; do
               echo "Publishing package: $package"

@@ -16,10 +16,14 @@
 
 ---
 
-A modern Nx plugin that adds comprehensive support for Cargo and Rust in your Nx workspace.
+A modern Nx plugin that adds comprehensive support for Cargo and Rust in your Nx
+workspace.
 
-> **Built upon the excellent foundation of [@monodon/rust](https://github.com/monodon/monodon) by the Monodon team.**  
-> This fork enhances the original plugin with additional features, improved reliability, and modern Nx compatibility while maintaining the core philosophy of seamless Rust integration.
+> **Built upon the excellent foundation of
+> [@monodon/rust](https://github.com/monodon/monodon) by the Monodon team.**  
+> This fork enhances the original plugin with additional features, improved
+> reliability, and modern Nx compatibility while maintaining the core philosophy
+> of seamless Rust integration.
 
 ## Compatibility Chart
 

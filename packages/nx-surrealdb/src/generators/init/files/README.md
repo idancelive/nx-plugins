@@ -37,7 +37,7 @@ nx g @deepbrainspace/nx-surrealdb:import-module --module=@deepbrainspace/surreal
 ```
 <%= name %>/
 ├── config.json             # Module configuration
-├── project.json            # NX project configuration  
+├── project.json            # NX project configuration
 ├── 000_admin/              # System administration module
 ├── 010_auth/               # Authentication module
 └── 020_schema/             # Application schema module
@@ -65,5 +65,6 @@ nx run <%= name %>:reset
 ## Troubleshooting
 
 If you get connection errors:
+
 - Check your .env file has the correct SurrealDB connection details
 - Ensure SurrealDB is running (e.g., `surreal start --user root --pass root`)
